@@ -317,7 +317,8 @@ WORK_RES StackIsValid(stack_t stk)
     return OK;
 }
 
-WORK_RES StackDump(stack_t *stk, ErrInfo errInfo)
+
+WORK_RES StackDump(ON_DBG(stack_t *stk, ErrInfo errInfo))
 {
     ON_DBG(
     MY_ASSERT(stk != NULL);
@@ -413,7 +414,7 @@ WORK_RES StackDump(stack_t *stk, ErrInfo errInfo)
 
     #endif
     )
-
+    
     return OK;
 }
 
@@ -427,4 +428,3 @@ unsigned long long djb2(const unsigned char *data, size_t dataLength)
 
     return hash;
 }
-

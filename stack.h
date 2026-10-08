@@ -94,7 +94,7 @@ WORK_RES GetStackCapacity(size_t *capacity);
 
 WORK_RES StackIsValid(stack_t stk);
 
-WORK_RES StackDump(stack_t *stk, ErrInfo errInfo);
+WORK_RES StackDump(ON_DBG(stack_t *stk, ErrInfo errInfo));
 
 unsigned long long djb2(const unsigned char *data, size_t dataLength);
 
