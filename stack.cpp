@@ -1,4 +1,4 @@
-#include "../includes/stack.h"
+#include "stack.h"
 
 WORK_RES StackCtor(
         stack_t *stk, size_t capacity 

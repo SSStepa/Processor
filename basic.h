@@ -47,6 +47,16 @@ struct ErrInfo {
 };
 
 /**
+ * used to check that function run correctly
+ * 
+ * need to be variable statusCode initialized.
+ */
+#define RUN_COMMAND(func, errorMessage)           \
+    if ((statusCode = func) != OK)                \
+        return $ERR(errorMessage, statusCode)
+
+
+/**
  * Const to say that number is zero(all numbers less than EPSILON are regarded as zeros)
  */
 const double EPSILON = 0.0001;
