@@ -13,11 +13,6 @@ struct commandCode
     const char *name;
 };
 
-struct string_t {
-    char *str;
-    size_t len;
-};
-
 /**
  * Command to it's code (sorted in alphabet to bin search)
  */

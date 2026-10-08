@@ -33,7 +33,7 @@ enum WORK_RES {
  * str - pointer to the first element of the string
  * len - length of the string (with no \0)
  */
-struct String {
+struct string_t {
     char *str;
     size_t len;
 };

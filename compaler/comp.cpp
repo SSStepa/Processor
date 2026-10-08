@@ -41,7 +41,7 @@ WORK_RES GetCompiledCodeLine(string_t *inLine, string_t *outLine)
         ind += step;
 
         size_t commandNumber = 0;
-        while(strcmp(COMMANDS_TO_CODE[commandNumber].name, "") != 0) {
+        while(strcmp(COMMANDS_TO_CODE[commandNumber].name, "") != 0) { // TODO: Sort and add bin search
 
             if (strcmp(command, COMMANDS_TO_CODE[commandNumber].name) == 0) {
                 strcat(outLine -> str, COMMANDS_TO_CODE[commandNumber].code);
@@ -110,5 +110,6 @@ WORK_RES OutByteCodeFile(const char *fileName, string_t *string)
     write(fileDes, string -> str, string ->len);
 
     close(fileDes);
+    
     return OK;
 }
