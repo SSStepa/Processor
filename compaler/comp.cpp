@@ -44,14 +44,35 @@ WORK_RES GetCompiledCodeLine(string_t *inLine, string_t *outLine)
         while(strcmp(COMMANDS_TO_CODE[commandNumber].name, "") != 0) { // TODO: Sort and add bin search
 
             if (strcmp(command, COMMANDS_TO_CODE[commandNumber].name) == 0) {
-                strcat(outLine -> str, COMMANDS_TO_CODE[commandNumber].code);
-                
-                if (strcmp(command, "PUSH") == 0) {
-                    strcat(outLine -> str, " ");
-                    sscanf((inLine -> str) + ind, "%s%n", command, &step);
-                    ind += step;
 
+                if (commandNumber == 2) { // PUSH
+                    double arg = 0;
+                    if (sscanf((inLine -> str) + ind, "%lg%n", &arg, &step) > 0) {
+                        strcat(outLine -> str, "2");
+                        sprintf(command, "%lg", arg);
+
+                    } else {
+                        sscanf((inLine -> str) + ind, "%s%n", &command, &step);
+                        strcat(outLine -> str, "67");
+
+                        size_t regInd = 0;
+                        while (strcmp(REGISTERS[regInd].name, "") != 0) {
+                            if (strcmp(REGISTERS[regInd].name, command) == 0) {
+                                sprintf(command, "%s", REGISTERS[regInd].code);
+                                break; 
+                            }
+                            regInd++;
+                        }
+                        if (strcmp(REGISTERS[regInd].name, "") == 0)
+                            return $ERR("NO SUCH REGISTER NAME", WRIN);
+                    }
+
+                    ind += step;
+                    strcat(outLine -> str, " ");
                     strcat(outLine -> str, command);
+                
+                } else {
+                strcat(outLine -> str, COMMANDS_TO_CODE[commandNumber].code);
                 }
 
                 strcat(outLine -> str, "\n");

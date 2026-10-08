@@ -13,13 +13,19 @@ struct commandCode
     const char *name;
 };
 
+struct registerCode
+{
+    const char *code;
+    const char *name;
+};
+
 /**
  * Command to it's code (sorted in alphabet to bin search)
  */
 const commandCode COMMANDS_TO_CODE[] = {
     "0",   "HLT",
     "1",   "OUT",
-    "2",   "PUSH",
+    "2",   "PUSH", // also PUSH for register is 67
     "3",   "ADD",
     "4",   "SUBTR",
     "5",   "MULT",
@@ -28,8 +34,18 @@ const commandCode COMMANDS_TO_CODE[] = {
     "8",   "SIN",
     "9",   "COS",
     "10",  "TAN",
+    "11",  "POP",
     "",  ""
 };
+
+const registerCode REGISTERS[] = {
+    "1", "AX",
+    "2", "BX",
+    "3", "CX",
+    "4", "DX",
+    "", ""
+};
+
 
 const int COMMAND_MAX_LEN = 20;
 
