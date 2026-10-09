@@ -26,7 +26,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "0",   "HLT",
     "1",   "OUT",
     "2",   "PUSH", // also PUSH for register is 67
-    "3",   "ADD",
+    "3",   "POP",
     "4",   "SUBTR",
     "5",   "MULT",
     "6",   "DIV",
@@ -34,7 +34,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "8",   "SIN",
     "9",   "COS",
     "10",  "TAN",
-    "11",  "POP",
+    "11",  "ADD",
     "",  ""
 };
 
@@ -49,13 +49,7 @@ const registerCode REGISTERS[] = {
 
 const int COMMAND_MAX_LEN = 20;
 
-
 WORK_RES Compiler(const char *inFileName, const char *outFileName);
 WORK_RES GetCompiledCodeLine(string_t *inLine, string_t *outLine);
-
-WORK_RES GetAsmFileFull (const char *fileName, string_t *string);
-WORK_RES OutByteCodeFile(const char *fileName, string_t *string);
-
-WORK_RES GetCommand(int *command, double *arg);
 
 #endif
