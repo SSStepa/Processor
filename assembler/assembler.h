@@ -18,6 +18,12 @@ struct registerCode
     const char *name;
 };
 
+struct labelList_t 
+{
+    int *labels;
+    size_t len;
+};
+
 /**
  * Command to it's code (sorted in alphabet to bin search)
  */
@@ -34,7 +40,14 @@ const commandCode COMMANDS_TO_CODE[] = {
     "9",   "COS",
     "10",  "TAN",
     "11",  "ADD",
-    "",  ""
+    "12",  "JMP",
+    "13",  "JA",
+    "14",  "JB",
+    "15",  "JE",
+    "16",  "JNE",
+    "17",  "JAE",
+    "18",  "JBE",
+    "19",  "JT"
 };
 
 const registerCode REGISTERS[] = {
@@ -46,12 +59,20 @@ const registerCode REGISTERS[] = {
 };
 
 
-const int COMMAND_MAX_LEN = 20;
+const int COMMAND_MAX_LEN   = 20;
+const int LABELS_START_SIZE = 5;
+const int LABEL_INIT        = -1;
 
 WORK_RES Assembler(const char *inFileName, const char *outFileName);
-WORK_RES GetCompiledCodeLine(string_t *inLine, string_t *outLine, bool *badLabels);
+WORK_RES GetCompiledCodeLine(string_t *inLine, string_t *outLine, bool firstRun, labelList_t *labelsList);
+WORK_RES PutCommandToCode(char *inLine, char *outLine, char *command, size_t *ind, int *elementsAmount, labelList_t *labelList);
 
 WORK_RES PushCommandToCode(char *inLine, char *outLine, size_t *ind);
 WORK_RES PopCommandToCode(char *inLine, char *outLine, size_t *ind);
+WORK_RES JumpArgToCode(char *inLine, char *outLine, size_t *ind, labelList_t *labelList);
+
+WORK_RES PutLabelIntoList(labelList_t *labelList, char *command, int elementInd);
+WORK_RES LabelsInit(labelList_t *labelList);
+WORK_RES InitLabelsValues(int *labels, size_t len);
 
 #endif
