@@ -97,12 +97,14 @@ WORK_RES PutCommandToCode(char *inLine, char *outLine, char *command, size_t *in
             } else if (
                     commandNumber == JMP || commandNumber == JA  || commandNumber == JB  ||
                     commandNumber == JE  || commandNumber == JNE || commandNumber == JAE ||
-                    commandNumber == JBE || commandNumber == JT
+                    commandNumber == JBE || commandNumber == JT ||
+                    commandNumber == CALL
                     ) {
                 strcat(outLine, COMMANDS_TO_CODE[commandNumber].code);
-                statusCode = JumpArgToCode(inLine, outLine, ind, labelList);
+                printf("<%s> %d", COMMANDS_TO_CODE[commandNumber].code, commandNumber);
+                statusCode = GoToArgToCode(inLine, outLine, ind, labelList);
                 (*elementsAmount)++;
-
+            
             } else {
             strcat(outLine, COMMANDS_TO_CODE[commandNumber].code);
             }
@@ -190,7 +192,7 @@ WORK_RES PopCommandToCode(char *inLine, char *outLine, size_t *ind)
     return OK;
 }
 
-WORK_RES JumpArgToCode(char *inLine, char *outLine, size_t *ind, labelList_t *labelList)
+WORK_RES GoToArgToCode(char *inLine, char *outLine, size_t *ind, labelList_t *labelList)
 {
     assert(inLine);
     assert(outLine);

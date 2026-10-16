@@ -24,6 +24,20 @@ struct labelList_t
     size_t len;
 };
 
+// struct FileData {
+//     WORK_RES  ErrCode;
+
+//     char      *dataPtr;
+//     size_t    dataLen;
+    
+//     char *binOpcode;
+//     char *usu
+    
+//     string_t    *firstLine;
+//     string_t    *indexDyn;
+//     size_t    indLen; 
+// };
+
 /**
  * Command to it's code (sorted in alphabet to bin search)
  */
@@ -47,7 +61,10 @@ const commandCode COMMANDS_TO_CODE[] = {
     "16",  "JNE",
     "17",  "JAE",
     "18",  "JBE",
-    "19",  "JT"
+    "19",  "JT",
+    "20",  "CALL",
+    "21",  "RET"
+    "22",  "IN"
 };
 
 const registerCode REGISTERS[] = {
@@ -69,7 +86,7 @@ WORK_RES PutCommandToCode(char *inLine, char *outLine, char *command, size_t *in
 
 WORK_RES PushCommandToCode(char *inLine, char *outLine, size_t *ind);
 WORK_RES PopCommandToCode(char *inLine, char *outLine, size_t *ind);
-WORK_RES JumpArgToCode(char *inLine, char *outLine, size_t *ind, labelList_t *labelList);
+WORK_RES GoToArgToCode(char *inLine, char *outLine, size_t *ind, labelList_t *labelList);
 
 WORK_RES PutLabelIntoList(labelList_t *labelList, char *command, int elementInd);
 WORK_RES LabelsInit(labelList_t *labelList);
