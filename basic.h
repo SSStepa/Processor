@@ -18,8 +18,8 @@
 enum CommandCodes {
     HLT,
     OUT,
-    PUSH_BASE,
-    POP_BASE,
+    PUSH,
+    POP,
     SUBTR,
     MULT,
     DIV,
