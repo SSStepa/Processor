@@ -7,11 +7,23 @@
 #include "../stack.h"
 #include "../basic.h"
 
+struct SPU_t {
+    stack_t dataStk;
+    stack_t callStk;
+    double registers[5];
+
+    double *code;
+    size_t codeLen;
+    size_t IP;
+};
+
 const size_t STACK_INIT_CAPACITY = 10;
 
-WORK_RES MainCalculation(const char *FileName);
+WORK_RES Proc(const char *FileName);
 
-WORK_RES GetCompiledFileInfo(const char *fileName, string_t *statusCode);
+WORK_RES SPU_Init(SPU_t *spu, const char *fileName);
+
+WORK_RES GetCompiledFileInfo(const char *fileName, double *code, size_t *codeLen);
 
 WORK_RES StopWork(string_t *commandLine, stack_t *stk);
 

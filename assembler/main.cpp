@@ -5,9 +5,9 @@ int main()
     SetUpLog();
 
     const char *inFileName = "a.txt";
-    const char *outFileName = "b.txt";
+    const char *outFileName = "c.bin";
     
-    Assembler(inFileName, outFileName);
+    Assembler(inFileName, outFileName, "b.txt");
 
     return 0;
 }

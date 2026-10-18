@@ -6,7 +6,7 @@ int main()
     
     const char *fileName = "b.txt";
 
-    MainCalculation(fileName);
+    Proc(fileName);
 
     return 0;
 }

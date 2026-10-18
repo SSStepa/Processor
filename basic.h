@@ -10,7 +10,39 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <math.h>
+#include <assert.h>
+#include <sys/stat.h>
 
+// -------------------------------------------------------- Project basic only -----------------------------------------------------------------------------
+
+enum CommandCodes {
+    HLT,
+    OUT,
+    PUSH_BASE,
+    POP_BASE,
+    SUBTR,
+    MULT,
+    DIV,
+    SQRT,
+    SIN,
+    COS,
+    TAN,
+    ADD,
+    JMP,
+    JA,
+    JB,
+    JE,
+    JNE,
+    JAE,
+    JBE,
+    JT,
+    CALL,
+    RET,
+    IN,
+    DRAW,
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------
 /**
  * @brief Work of function available results.
  */
@@ -25,7 +57,10 @@ enum WORK_RES {
     STACK_CAP        = 12, // zero capacity
     STACK_OVERFLOW   = 13,  // size > capacity
     STACK_UNDERFLOW  = 14, // size < 0;
-    STACK_CANARY_RIP = 15 // rip of stack canary;
+    STACK_CANARY_RIP = 15, // rip of stack canary;
+
+    TAKEN_LABEL = 20, // label already has it's 
+    NO_LABEL = 21 // label does not exist
 };
 
 /**
@@ -135,5 +170,7 @@ WORK_RES EndError();
 #define MY_ASSERT(...) 
 #endif
 
+WORK_RES GetFileFull(const char *fileName, string_t *string);
+WORK_RES OutFileFull(const char *fileName, string_t *string);
 
 #endif

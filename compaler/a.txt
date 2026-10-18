@@ -1,3 +1,0 @@
-PUSH 4.3
-POP AX
-ADD
