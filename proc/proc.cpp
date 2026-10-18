@@ -91,7 +91,7 @@ WORK_RES SPU_Init(SPU_t *spu, const char *fileName)
     return statusCode;
 }
 
-WORK_RES GetCompiledFileInfo(const char *fileName, double *code, size_t *codeLen)
+WORK_RES GetCompiledFileInfo(const char *fileName, char *code, size_t *codeLen)
 {
     assert(fileName != NULL);
     assert(codeLen);
@@ -102,23 +102,8 @@ WORK_RES GetCompiledFileInfo(const char *fileName, double *code, size_t *codeLen
     
     RUN_COMMAND(GetFileFull(fileName, &string), "CAN'T GET CODE FROM FILE");
 
-    code = (double *) calloc(string.len, sizeof(double));
-    if (code == NULL) return $ERR("NOT ENOUGH MEMORY FOR CODE", NOMEM);
-    *codeLen = 0;
-
-    double command = 0;
-
-    size_t ind = 0;
-    size_t step = 0;
-    while(sscanf(string.str + ind, "%lg%n", &command, &step) == 2) {
-        $dbl(command);
-        code[(*codeLen)++] = command;
-        ind += step;
-    }
-
-    code = (double *) realloc(code, sizeof(double) * *codeLen);
-
-    free(string.str);
+    code = string.str; 
+    *codeLen = string.len;
 
     return statusCode;
 }

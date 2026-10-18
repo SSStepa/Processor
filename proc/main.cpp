@@ -4,7 +4,7 @@ int main()
 {
     SetUpLog();
     
-    const char *fileName = "b.txt";
+    const char *fileName = "../assembler/c.bin";
 
     Proc(fileName);
 
