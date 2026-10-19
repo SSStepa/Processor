@@ -65,6 +65,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "21",  "RET",
     "22",  "IN",
     "23",  "DRAW",
+    "24",  "OUT_C",
 };
 
 const registerCode REGISTERS[] = {

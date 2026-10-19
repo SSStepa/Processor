@@ -1,5 +1,4 @@
 *.log
 *.exe
 TODO
-a.txt
-b.txt
+.vscode/

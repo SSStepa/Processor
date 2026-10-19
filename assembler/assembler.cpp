@@ -40,7 +40,7 @@ WORK_RES GetCompiledCodeLine(FileData *data, bool firstRun)
     (data -> textOpcode).len = 0;
 
     (data -> binOpcode).str = (char *) calloc((data -> asmStartData).len*8, sizeof(char)); // TODO: controle size 
-    if ((data -> textOpcode).str == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
+    if ((data -> binOpcode).str == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
     (data -> binOpcode).len = 0;
     
     char command[COMMAND_MAX_LEN] = "";
@@ -52,7 +52,7 @@ WORK_RES GetCompiledCodeLine(FileData *data, bool firstRun)
 
         int step = 0;
 
-        if (sscanf(data -> commandLine, "%s%n", command, &step) <= 0) break;
+        if (sscanf(data -> commandLine, "%s%n", command, &step) <= 0) continue;
         data -> commandLine += step;
 
         if (command[0] == ';') continue;
@@ -382,6 +382,8 @@ WORK_RES OutFileFull(const char *outBinName, const char *outFileTextName, FileDa
     if (binFile == NULL) return $ERR("NO FILE TO WRITE TO BIN IN OutFileFull", FILEERR);
 
     fwrite((data -> binOpcode).str, sizeof(char), (data -> binOpcode).len, binFile);
+
+    fclose(binFile);
     
     return OK;
 }
