@@ -101,7 +101,7 @@ WORK_RES PutCommandToCode(FileData *data, char *command, int *elementsAmount)
                 (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d ", commandNumber);
                 *((data -> binOpcode).str + (data -> binOpcode).len++) =  (char) commandNumber;
                 statusCode = GoToArgToCode(data);
-                (*elementsAmount)++;
+                *elementsAmount += sizeof(double);
             
             } else {
                 (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d", commandNumber);
@@ -228,21 +228,26 @@ WORK_RES GoToArgToCode(FileData *data)
 
     (data -> commandLine)++; // skip whitespace
     
-    int label = 0;
+    char label[MAX_LABEL_LEN] = "";
+    int goTo = -1;
     if ((data -> commandLine)[0] == ':') {
-        sscanf((data -> commandLine), ":%d", &label);
-        if (label < 0) return $ERR("ERROR LABEL HAVE TO BE POSITIVE", WRIN);
+        sscanf((data -> commandLine), ":%s", label);
 
-        if (label >= (int) (data -> labelsList).len || (data -> labelsList).labels[label] == -1) {
-            label = -1;
-            statusCode = NO_LABEL;
-        } else
-            label = (data -> labelsList).labels[label];
+        size_t ind = 0;
+        for (ind = 0; ind < (data -> labelsList).len; ind ++) {
+            if (strcmp((data -> labelsList).labels[ind].name, label) == 0) {
+                goTo = (data -> labelsList).labels[ind].placeToGo;
+                break;
+            }
+        } 
+        if (ind == (data ->labelsList).len)
+            goTo = -1;
+
     } else
-        if (sscanf(data -> commandLine, "%d", &label) != 1) return $ERR("WRONG ARGUMENT FOR JUMP COMMAND", WRIN);
+        if (sscanf(data -> commandLine, "%d", &goTo) != 1) return $ERR("WRONG ARGUMENT FOR JUMP COMMAND", WRIN);
     
-    (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%lg", (double) label);
-    *((double *) ((data -> binOpcode).str + (data -> binOpcode).len)) =  (double) label;
+    (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%lg", (double) goTo);
+    *((double *) ((data -> binOpcode).str + (data -> binOpcode).len)) =  (double) goTo;
     (data -> binOpcode).len += sizeof(double);
 
     return statusCode;
@@ -256,27 +261,19 @@ WORK_RES PutLabelIntoList(labelList_t *labelList, char *command, int elementInd)
 
     WORK_RES statusCode = OK;
 
-    int  label = 0;
-    if (sscanf(command, ":%d", &label) != 1)
-        return $ERR("CAN'T GET LABEL FROM ASM", WRIN);
-    
-    if (label < 0)
-        return $ERR("LABELS HAVE TO BE GREATER THAN ZERO", WRIN);
-    
-    if (label >= (int) labelList -> len) {
-        int *temp = (int *)  realloc(labelList -> labels, sizeof(int) * (label + 1));
+    strcat((labelList -> labels)[(labelList -> fullElls)].name, &command[1]);
+    (labelList -> labels)[labelList -> fullElls].placeToGo = elementInd;
+    (labelList -> fullElls)++;
+
+    if (labelList -> fullElls >= labelList -> len) {
+        labelList -> len *= 2;
+
+        label_t *temp = (label_t *)  realloc(labelList -> labels, sizeof(label_t) * (labelList -> len));
         if (temp == NULL) 
             return $ERR("NOT ENOUGH MEMORY TO RESIZE LABELS", NOMEM);
 
         labelList -> labels = temp;
-        RUN_COMMAND(InitLabelsValues(labelList -> labels + labelList -> len, label - labelList -> len + 1), "ERROR WHILE TRYING TO INIT LABELS VALUES");
-        labelList -> len = label + 1;
     }
-
-    if (labelList -> labels[label] != LABEL_INIT)
-        return $ERR("REINIT OF LABEL", WRIN);
-    
-    labelList -> labels[label] = elementInd;
 
     return statusCode;
     
@@ -288,7 +285,7 @@ WORK_RES LabelsInit(labelList_t *labelList)
 
     WORK_RES statusCode = OK;
 
-    labelList -> labels = (int *) calloc(LABELS_START_SIZE, sizeof(int));
+    labelList -> labels = (label_t *) calloc(LABELS_START_SIZE, sizeof(label_t));
     if (labelList -> labels == NULL)
         return $ERR("NOT ENOUGH MEMORY FOR LABELS", NOMEM);
     
@@ -299,12 +296,13 @@ WORK_RES LabelsInit(labelList_t *labelList)
     return statusCode;
 }
 
-WORK_RES InitLabelsValues(int *labels, size_t len)
+WORK_RES InitLabelsValues(label_t *labels, size_t len)
 {
     assert(labels);
 
     for (size_t ind = 0; ind < len; ind++) {
-        labels[ind] = LABEL_INIT;
+        strcat(labels[ind].name, LABEL_INIT);
+        labels[ind].placeToGo = -1;
     }
     
     return OK;

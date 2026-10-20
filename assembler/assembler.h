@@ -6,6 +6,8 @@
 
 #include "../basic.h"
 
+const int  MAX_LABEL_LEN = 20; 
+
 struct commandCode
 {
     const char *code;
@@ -18,10 +20,16 @@ struct registerCode
     const char *name;
 };
 
+struct label_t {
+    char name[MAX_LABEL_LEN];
+    int placeToGo;
+};
+
 struct labelList_t 
 {
-    int *labels;
-    size_t len;
+    label_t *labels;
+    size_t   fullElls;
+    size_t   len;
 };
 
 struct FileData {
@@ -45,7 +53,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "1",   "OUT",
     "2",   "PUSH", // also PUSH for register is 67
     "3",   "POP",
-    "4",   "SUBTR",
+    "4",   "SUB",
     "5",   "MULT",
     "6",   "DIV",
     "7",   "SQRT",
@@ -66,6 +74,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "22",  "IN",
     "23",  "DRAW",
     "24",  "OUT_C",
+    "", ""
 };
 
 const registerCode REGISTERS[] = {
@@ -79,8 +88,8 @@ const registerCode REGISTERS[] = {
 
 const int COMMAND_MAX_LEN   = 20;
 const int REGISTER_MAX_LEN  = 3;
-const int LABELS_START_SIZE = 5;
-const int LABEL_INIT        = -1;
+const int LABELS_START_SIZE = 20;
+const char *const LABEL_INIT      = "";
 
 WORK_RES Assembler(const char *inFileName, const char *outBinFileName, const char *outFileName);
 WORK_RES GetCompiledCodeLine(FileData *data, bool firstRun);
@@ -93,7 +102,7 @@ WORK_RES GoToArgToCode(FileData *data);
 
 WORK_RES PutLabelIntoList(labelList_t *labelList, char *command, int elementInd);
 WORK_RES LabelsInit(labelList_t *labelList);
-WORK_RES InitLabelsValues(int *labels, size_t len);
+WORK_RES InitLabelsValues(label_t *labels, size_t len);
 WORK_RES GetRegisterByName(char *command, char *regNumber);
 
 WORK_RES ParseFileToLines(FileData *data);

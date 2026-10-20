@@ -4,7 +4,7 @@ int main()
 {
     SetUpLog();
 
-    const char *inFileName = "a.txt";
+    const char *inFileName = "sqr.asm";
     const char *outFileName = "c.bin";
     
     Assembler(inFileName, outFileName, "b.txt");

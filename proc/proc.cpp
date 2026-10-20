@@ -31,7 +31,7 @@ WORK_RES Proc(const char *FileName)
         case ADD:
             RUN_COMMAND(AddElls(&spu.dataStk), "ERROR WHILE TRYING TO ADD ELEMENTS");
             break;
-        case SUBTR:
+        case SUB:
             RUN_COMMAND(SubtrElls(&spu.dataStk), "ERROR WHILE TRYING TO SUBTRACT");
             break;
         case MULT:
@@ -203,7 +203,8 @@ WORK_RES CallFunctionCommand(SPU_t *spu)
 
     WORK_RES statusCode = OK;
 
-    RUN_COMMAND(StackPush(&(spu -> callStk), (double) (spu -> IP + 1)), "ERROR WHILE TRYING TO PUSH CALL INDEX");
+    RUN_COMMAND(StackPush(&(spu -> callStk), (double) ((spu -> IP) + sizeof(double))), "ERROR WHILE TRYING TO PUSH CALL INDEX");
+
     spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
 
     return OK;

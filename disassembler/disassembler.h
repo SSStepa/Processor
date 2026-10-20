@@ -23,7 +23,7 @@ const commandCode CODE_TO_COMMANDS[] = {
     "1",   "OUT",
     "2",   "PUSH",
     "3",   "ADD",
-    "4",   "SUBTR",
+    "4",   "SUB",
     "5",   "MULT",
     "6",   "DIV",
     "7",   "SQRT",

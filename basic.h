@@ -20,7 +20,7 @@ enum CommandCodes {
     OUT,
     PUSH,
     POP,
-    SUBTR,
+    SUB,
     MULT,
     DIV,
     SQRT,
