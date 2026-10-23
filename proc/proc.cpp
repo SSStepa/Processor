@@ -236,125 +236,17 @@ WORK_RES JmpCommand(SPU_t *spu)
     return OK;
 }
 
-WORK_RES JaCommand(SPU_t *spu)
-{
-    assert(spu);
+JMP_CREATE(JaCommand, el1 > el2);
 
-    WORK_RES statusCode = OK;
+JMP_CREATE(JbCommand, el1 < el2);
 
-    double el1 = 0;
-    double el2 = 0;
+JMP_CREATE(JeCommand, IsZero(el1 - el2));
 
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
+JMP_CREATE(JaeCommand, el1 > el2 || IsZero(el1 - el2));
 
-    if (el1 > el2)
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-    
-    return OK;
-}
+JMP_CREATE(JbeCommand, el1 < el2 || IsZero(el1 - el2));
 
-WORK_RES JbCommand(SPU_t *spu)
-{
-    assert(spu);
-
-    WORK_RES statusCode = OK;
-
-    double el1 = 0;
-    double el2 = 0;
-
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
-
-    if (el1 < el2)
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-  
-    return OK;
-}
-
-WORK_RES JeCommand(SPU_t *spu)
-{
-    assert(spu);
-
-    WORK_RES statusCode = OK;
-
-    double el1 = 0;
-    double el2 = 0;
-
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
-
-    if (IsZero(el1 - el2))
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-    
-    return OK;
-}
-
-WORK_RES JaeCommand(SPU_t *spu)
-{
-    assert(spu);
-
-    WORK_RES statusCode = OK;
-
-    double el1 = 0;
-    double el2 = 0;
-
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
-
-    if (el1 > el2 || IsZero(el1 - el2))
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-    
-    return OK;
-}
-
-WORK_RES JbeCommand(SPU_t *spu)
-{
-    assert(spu);
-
-    WORK_RES statusCode = OK;
-
-    double el1 = 0;
-    double el2 = 0;
-
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
-
-    if (el1 < el2 || IsZero(el1 - el2))
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-    
-    return OK;
-}
-
-WORK_RES JneCommand(SPU_t *spu)
-{
-    assert(spu);
-
-    WORK_RES statusCode = OK;
-
-    double el1 = 0;
-    double el2 = 0;
-
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");
-    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");
-
-    if (!IsZero(el1 - el2))
-        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));
-    else 
-        spu -> IP += sizeof(double);
-    
-    return OK;
-}
+JMP_CREATE(JneCommand, !IsZero(el1 - el2));
 
 WORK_RES JtCommand(SPU_t *spu)
 {
@@ -563,7 +455,7 @@ WORK_RES DrawRAMCommand(SPU_t *spu)
     printf("\033[?25l" GRN); // no cursor
 
     write(STDOUT_FILENO, spu -> RAM, RAM_INIT_SIZE);
-    Sleep(1000/27);
+    Sleep(SLEEP_TIME);
 
     return OK;
 }

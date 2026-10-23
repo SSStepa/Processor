@@ -11,6 +11,7 @@
 
 const size_t RAM_INIT_SIZE = 3495;
 const size_t STACK_INIT_CAPACITY = 10;
+const double SLEEP_TIME = 1000/27;
 
 struct OpCode {
     unsigned int code  :5;
@@ -32,7 +33,6 @@ struct SPU_t {
 
     OpCode command;
 };
-
 
 WORK_RES Proc(const char *FileName);
 
@@ -70,5 +70,26 @@ WORK_RES JtCommand(SPU_t *spu);
 
 WORK_RES CallFunctionCommand(SPU_t *spu);
 WORK_RES RetFunctionCommand(SPU_t *spu);
+
+#define JMP_CREATE(funcName, operationEl1El2)                                                 \
+WORK_RES funcName(SPU_t *spu)                                                           \
+{                                                                                       \
+    assert(spu);                                                                        \
+                                                                                        \
+    WORK_RES statusCode = OK;                                                           \
+                                                                                        \
+    double el1 = 0;                                                                     \
+    double el2 = 0;                                                                     \
+                                                                                        \
+    RUN_COMMAND(StackPop(&(spu -> dataStk), &el1), "CAN'T GET ELEMENT FROM STACK");     \
+    RUN_COMMAND(StackPop(&(spu -> dataStk), &el2), "CAN'T GET ELEMENT FROM STACK");     \
+                                                                                        \
+    if (operationEl1El2)                                                 \
+        spu -> IP = (size_t) *((double *) (spu -> code + spu -> IP));                   \
+    else                                                                                \
+        spu -> IP += sizeof(double);                                                    \
+                                                                                        \
+    return OK;                                                                          \
+}
 
 #endif

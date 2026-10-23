@@ -1,7 +1,5 @@
 #include "proc.h"
 
-// TODO:  push pop arg parse function
-// TODO: magic numbers to consts
 int main()
 {
     SetUpLog();
