@@ -560,7 +560,7 @@ WORK_RES DrawRAMCommand(SPU_t *spu)
     assert(spu);
 
     printf("\033[2J"); // clear screen
-    printf("\033[?25l"); // no cursor
+    printf("\033[?25l" GRN); // no cursor
 
     write(STDOUT_FILENO, spu -> RAM, RAM_INIT_SIZE);
     Sleep(1000/27);
