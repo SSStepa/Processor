@@ -111,6 +111,7 @@ WORK_RES GetFileFull(const char *fileName, string_t *string)
     string -> str = (char *) calloc(st.st_size + 1, sizeof(char));
     if (string -> str == NULL) return $ERR("NOT ENOUGH MEMORY TO READ FILE AS FULL", NOMEM);
 
+
     int fileLen = read(fileDes, (void *) string -> str, st.st_size);
     if (fileLen < 0) return $ERR("ERROR WHILE READING FROM FILE", FILEERR);
 
@@ -124,4 +125,30 @@ WORK_RES GetFileFull(const char *fileName, string_t *string)
     return OK;
 }
 
+WORK_RES GetFileFullBin(const char *fileName, string_t *string)
+{
+    assert(fileName != NULL);
+    assert(string);
 
+    int fileDes = open(fileName, O_RDONLY | O_BINARY, 0);
+    if (fileDes == -1) return $ERR("NO FILE TO READ FROM IN GetFAsmFileFull", FILEERR);
+
+    struct stat st = {};
+    if (fstat(fileDes, &st)) return $ERR("ERROR IN FILE WHILE TRYING TO fstat", FILEERR);
+
+    string -> str = (char *) calloc(st.st_size + 1, sizeof(char));
+    if (string -> str == NULL) return $ERR("NOT ENOUGH MEMORY TO READ FILE AS FULL", NOMEM);
+
+
+    int fileLen = read(fileDes, (void *) string -> str, st.st_size);
+    if (fileLen < 0) return $ERR("ERROR WHILE READING FROM FILE", FILEERR);
+
+    string -> str = (char *) realloc(string -> str, fileLen + 1);
+    *(string -> str + fileLen) = '\0';
+    
+    string -> len = (size_t) fileLen;
+
+    close(fileDes);
+
+    return OK;
+}

@@ -50,7 +50,7 @@ struct FileData {
  */
 const commandCode COMMANDS_TO_CODE[] = {
     "0",   "HLT",
-    "1",   "OUT",
+    "1",   "OUT_D",
     "2",   "PUSH", // also PUSH for register is 67
     "3",   "POP",
     "4",   "SUB",
@@ -71,7 +71,7 @@ const commandCode COMMANDS_TO_CODE[] = {
     "19",  "JT",
     "20",  "CALL",
     "21",  "RET",
-    "22",  "IN",
+    "22",  "IN_D",
     "23",  "DRAW",
     "24",  "OUT_C",
     "", ""
@@ -97,7 +97,7 @@ WORK_RES PutCommandToCode(FileData *data, char *command, int *elementsAmount);
 
 WORK_RES PushCommandToCode(FileData *data, int *elementsAmount);
 WORK_RES PopCommandToCode(FileData *data, int *elementsAmount);
-WORK_RES PushPopArgParse(char *commandNumber, FileData *data, int *elementsAmount);
+WORK_RES PushPopArgParse(unsigned char *commandNumber, FileData *data, int *elementsAmount);
 WORK_RES GoToArgToCode(FileData *data);
 
 WORK_RES PutLabelIntoList(labelList_t *labelList, char *command, int elementInd);

@@ -4,11 +4,12 @@
 #include <math.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <windows.h>
 
 #include "../stack.h"
 #include "../basic.h"
 
-const size_t RAM_INIT_SIZE = 100;
+const size_t RAM_INIT_SIZE = 3495;
 const size_t STACK_INIT_CAPACITY = 10;
 
 struct OpCode {
@@ -23,7 +24,7 @@ struct SPU_t {
     stack_t callStk;
     double registers[5];
 
-    double RAM[RAM_INIT_SIZE];
+    char *RAM;
     
     char *code;
     size_t codeLen;

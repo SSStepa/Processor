@@ -129,7 +129,7 @@ WORK_RES PushCommandToCode(FileData *data, int *elementsAmount)
     assert(data);
     assert(elementsAmount);
 
-    char commandNumber = (char) PUSH;
+    unsigned char commandNumber = (unsigned char) PUSH;
 
     PushPopArgParse(&commandNumber, data, elementsAmount);
 
@@ -141,7 +141,7 @@ WORK_RES PopCommandToCode(FileData *data, int *elementsAmount)
     assert(data);
     assert(elementsAmount);
 
-    char commandNumber = (char) POP;
+    unsigned char commandNumber = (unsigned char) POP;
 
     PushPopArgParse(&commandNumber, data, elementsAmount); 
 
@@ -171,7 +171,7 @@ WORK_RES GetRegisterByName(char *command, char *regNumber)
     return OK;
 }
 
-WORK_RES PushPopArgParse(char *commandNumber, FileData *data, int *elementsAmount)
+WORK_RES PushPopArgParse(unsigned char *commandNumber, FileData *data, int *elementsAmount)
 {
     assert(commandNumber);
     assert(data);
@@ -189,7 +189,7 @@ WORK_RES PushPopArgParse(char *commandNumber, FileData *data, int *elementsAmoun
         (data -> commandLine)++; 
     }
 
-    if (sscanf(data -> commandLine, "%lg + %3[^] ]", &arg1, arg2) == 2 ||
+    if (sscanf(data -> commandLine, "%lg + %3[^] ]", &arg1, arg2) == 2 || // TODO: %n for ] if [
         sscanf(data -> commandLine, "%3[^+ ] + %lg",  arg2, &arg1) == 2) {
         commandAdd |= 0x60;
     } else if (sscanf(data -> commandLine, "%lg", &arg1) == 1) {
@@ -202,7 +202,7 @@ WORK_RES PushPopArgParse(char *commandNumber, FileData *data, int *elementsAmoun
 
     *commandNumber |= commandAdd;
     (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d ", *commandNumber);
-    *((data -> binOpcode).str + (data -> binOpcode).len++) =  *commandNumber;
+    *((data -> binOpcode).str + (data -> binOpcode).len++) =  *commandNumber; // TODO: define as STR LEN and next (DSL)
 
     if (commandAdd & 0x20) {
         (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%lg", arg1);

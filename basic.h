@@ -17,7 +17,7 @@
 
 enum CommandCodes {
     HLT,
-    OUT,
+    OUT_D,
     PUSH,
     POP,
     SUB,
@@ -38,7 +38,7 @@ enum CommandCodes {
     JT,
     CALL,
     RET,
-    IN,
+    IN_D,
     DRAW,
     OUT_C
 };
@@ -136,7 +136,7 @@ WORK_RES EndError();
 
 #define $int(Variable) InfoPrintfInt(Variable, TO_STR(Variable), __FILE__, __LINE__)
 #define $str(Variable) InfoPrintfStr(Variable, TO_STR(Variable), __FILE__, __LINE__)
-#define $c(Variable) InfoPrintfC(Variable, TO_STR(Variable), __FILE__, __LINE__)
+#define $ch(Variable) InfoPrintfC(Variable, TO_STR(Variable), __FILE__, __LINE__)
 #define $dbl(Variable) InfoPrintfDouble(Variable, TO_STR(Variable), __FILE__, __LINE__)
 #define $llu(Variable) InfoPrintfLlu(Variable, TO_STR(Variable), __FILE__, __LINE__)
 
@@ -172,6 +172,7 @@ WORK_RES EndError();
 #endif
 
 WORK_RES GetFileFull(const char *fileName, string_t *string);
+WORK_RES GetFileFullBin(const char *fileName, string_t *string);
 WORK_RES OutFileFull(const char *fileName, string_t *string);
 
 #endif

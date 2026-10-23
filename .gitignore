@@ -2,3 +2,5 @@
 *.exe
 TODO
 .vscode/
+badApple/
+BadAppleOut.asm

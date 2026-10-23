@@ -16,7 +16,7 @@ WORK_RES Proc(const char *FileName)
         switch (spu.command.code) {
         case HLT:
             return StopWork(&spu);
-        case OUT:
+        case OUT_D:
             RUN_COMMAND(ShowRes(&spu.dataStk), "ERROR WHILE TRYING TO OUT RESULT");
             break;
         case OUT_C:
@@ -82,7 +82,7 @@ WORK_RES Proc(const char *FileName)
         case RET:
             RUN_COMMAND(RetFunctionCommand(&spu), "ERROR WHILE TRYING TO FUNCTION RETURN");
             break;
-        case IN:
+        case IN_D:
             RUN_COMMAND(InCommand(&spu), "ERROR WHILE TRYING TO TAKE USER INPUT");
             break;
         case DRAW:
@@ -104,6 +104,8 @@ WORK_RES SPU_Init(SPU_t *spu, const char *fileName)
 
     spu -> IP      = 0;
     spu -> codeLen = 0;
+
+    spu -> RAM = (char *) calloc(RAM_INIT_SIZE, sizeof(char));
 
     if ((statusCode = StackCtor(&(spu -> dataStk), STACK_INIT_CAPACITY)) != OK) {
         return $ERR("ERROR WHILE TRYING TO CONSTRUCT STACK FOR DATA", statusCode);
@@ -157,6 +159,7 @@ WORK_RES PopElls(SPU_t *spu)
     if ((spu -> command).konst && (spu -> command).reg && !(spu -> command).mem)
         return $ERR("CAN'T POP CONST + REG", WRIN);
 
+
     double elem = NAN;
     RUN_COMMAND(StackPop(&(spu -> dataStk), &elem), "ERROR WHILE TRYING TO GET ELEMENT FROM THE STACK");
 
@@ -189,7 +192,7 @@ WORK_RES GetCompiledFileInfo(const char *fileName, char **code, size_t *codeLen)
 
     string_t string = {};
     
-    RUN_COMMAND(GetFileFull(fileName, &string), "CAN'T GET CODE FROM FILE");
+    RUN_COMMAND(GetFileFullBin(fileName, &string), "CAN'T GET CODE FROM FILE");
 
     *code = string.str; 
     *codeLen = string.len;
@@ -374,7 +377,8 @@ WORK_RES StopWork(SPU_t *spu)
 
     WORK_RES statusCode = OK;
 
-    free((spu -> code));
+    free(spu -> code);
+    free(spu -> RAM);
 
     RUN_COMMAND(StackDtor(&(spu -> dataStk)), "ERROR WHILE TRUING TO DECONSTRUCT STACK");
     RUN_COMMAND(StackDtor(&(spu -> callStk)), "ERROR WHILE TRUING TO DECONSTRUCT STACK");
@@ -555,10 +559,11 @@ WORK_RES DrawRAMCommand(SPU_t *spu)
 {
     assert(spu);
 
-    for (size_t ind = 0; ind < RAM_INIT_SIZE; ind++)
-        printf("%c", (char) (spu -> RAM)[ind]);
+    printf("\033[2J"); // clear screen
+    printf("\033[?25l"); // no cursor
 
-    printf(GRN "That is all \n" COLOR_RESET);
+    write(STDOUT_FILENO, spu -> RAM, RAM_INIT_SIZE);
+    Sleep(1000/27);
 
     return OK;
 }
