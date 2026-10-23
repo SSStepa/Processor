@@ -1,5 +1,6 @@
 # SPU and assembler project
 This project is third tasks of MIPT DREC 1 course program for advanced group Program is taught by Dedinsky Ilya Rudolfovich(@ded32_ru)
+![Bad1](./BadScreen.jpg)
 ## Description 
 ### Structure of project
 ```
@@ -52,6 +53,7 @@ Project consists of two main parts:
 stacks for process are used
 taken from my project. see [Staks](https://github.com/SSStepa/My_Stack) for more
 ## Asm code description
+![Bad2](./BadApple2.jpg)
 
 Registers to use: `AX BX CX DX`
 
@@ -129,4 +131,45 @@ DRAW            - prints all RAM to stdout
 5) deletes all first run results except labels array
 6) fills asm listing and bin lines with correct labels
 7) outs both lines into files at once
+
+DSL used in assembler to make it easy to read
+
+## Proc work pattern
+1) reads bin file full
+2) starts reading from line of chars
+3) command is regarded as one byte where mem:1-reg:1-konst:1-code:5 division is used
+4) argument may take one (reg) or 8 (konst double) bytes
+5) doesn't account alignment 
+6) accepts that program finishes with HLT. or UB may occur
+
+## Examples of usage:
+
+Print number:
+``` asm
+PUSH 67
+OUT_D
+HLT
+```
+Printf latter A
+```
+PUSH 65
+OUT_C
+HLT
+```
+
+Sum elements and out:
+``` asm
+IN_D
+IN_D
+ADD
+OUT
+HLT
+
+```
+
+on the git hub are:
+- circle.asm - draw circle using RAM
+- fact.asm - recursively calculating fact of number
+- sqr - solves square equation
+- bad apple - gives you perfect badApple video to watch
 

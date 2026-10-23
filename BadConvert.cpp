@@ -9,7 +9,7 @@ int main () {
     char mem[FILE_ELEMS] = {};
     char filename[20] = {};
 
-    FILE *outFile = fopen("BadAppleOut.asm", "w");
+    FILE *outFile = fopen("BadAppleOut1.asm", "w");
 
     fprintf(outFile, "PUSH %d\nPOP [%d]\n", '\033', 0);
     fprintf(outFile, "PUSH %d\nPOP [%d]\n", '[', 1);
@@ -20,10 +20,10 @@ int main () {
         string_t string = {};
         GetFileFull(filename, &string);
         for (size_t elem = 0; elem < FILE_ELEMS; elem++) {
-            if(string.str[elem] != mem[elem]) {
-                mem[elem] = string.str[elem];
+            // if(string.str[elem] != mem[elem]) {
+                // mem[elem] = string.str[elem];
                 fprintf(outFile, "PUSH %d\nPOP [%d]\n", string.str[elem], elem + 3);
-            }
+            // }
         }
         fprintf(outFile, "DRAW\n");
     }
