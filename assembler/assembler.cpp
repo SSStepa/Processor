@@ -174,6 +174,7 @@ WORK_RES PushPopArgParse(unsigned char *commandNumber, FileData *data, int *elem
 {
     assert(commandNumber);
     assert(data);
+    assert(elementsAmount);
 
     WORK_RES statusCode = OK;
 

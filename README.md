@@ -67,62 +67,63 @@ Labels may be used as words:
 
 
 Valid commands:
-``` ams
-HLT             - ends work of processor
 
-PUSH 11.1       - pushes const into data stack
-PUSH AX         - pushes value of AX register into data stack
-PUSH AX + 11.1  - pushes value of AX + const into data stack
-PUSH [1]        - takes info from RAM[1] and pushes into data stack
-PUSH [AX]       - pushes info from RAM[AX/value] into data stack
-PUSH [1+AX]     - pushes info from RAM[AX.value + 1] into data stack
-
-POP AX          - pops value from stack into AX
-POP [1]         - pops value from stack into RAM[1]
-POP [AX]        - pops value from stack into RAM[AX.value]
-POP [1+AX]      - pops value from stack into RAM[AX.value + 1]
-
-OUT_D           - pops element from stack and prints it to stdout
-OUT_C           - pops element from stack and prints it to stdout as char
-IN_D            - takes one char form stdin and writes it into data stack as double
-
-Takes two elements from stack and:
-ADD             - finds their sum
-SUB             - finds their difference
-MULT            - finds their multiplication 
-DIV             - divides one by other
-And writes result to stack
-
-Takes element from stack and finds it's:
-SQRT            - square root
-SIN             - sin
-COS             - cos
-TAN             - tan
-and writes result into stack
-
-JMP 5           - jumps into place in code with index 5(remember - one command one element, one argument - 8 elements)
-JMP :1          - jumps to place of label declaration. WARNING do not redeclare labels
-
-Commands doing JMP if:
-pop a and b from stack
-JA              - a < b
-JB              - a > b
-JE              - a == b
-JNE             - a != b
-JAE             - a <= b
-JBE             - a >= b
-JT              - jumps if today is tuesday
-
-CALL ...        - calls function with label or index(as jmp). remembers place of call into calls stack
-RET             - pops element from calls stack and puts IP to this value
-
-
-DRAW            - prints all RAM to stdout
-```
+| command | explanation |                                   
+|:--------------:|:----------------------------------------------------------------------------------------------------:|
+|HLT             | ends work of processor                                                                               |
+                                    
+|PUSH 11.1       | pushes const into data stack                                                                         |
+|PUSH AX         | pushes value of AX register into data stack                                                          |
+|PUSH AX + 11.1  | pushes value of AX + const into data stack                                                           |
+|PUSH [1]        | takes info from RAM[1] and pushes into data stack                                                    |
+|PUSH [AX]       | pushes info from RAM[AX/value] into data stack                                                       |
+|PUSH [1+AX]     | pushes info from RAM[AX.value + 1] into data stack                                                   |
+                                    
+|POP AX          | pops value from stack into AX                                                                        |
+|POP [1]         | pops value from stack into RAM[1]                                                                    |
+|POP [AX]        | pops value from stack into RAM[AX.value]                                                             |
+|POP [1+AX]      | pops value from stack into RAM[AX.value + 1]                                                         |
+                                    
+|OUT_D           | pops element from stack and prints it to stdout                                                      |
+|OUT_C           | pops element from stack and prints it to stdout as char                                              |
+|IN_D            | takes one char form stdin and writes it into data stack as double                                    |
+                                    
+||Takes two elements from stack and:                                                                                    |
+|ADD             | finds their sum                                                                                      |
+|SUB             | finds their difference                                                                               |
+|MULT            | finds their multiplication                                                                           |
+|DIV             | divides one by other                                                                                 |
+||And writes result to stack                                                                                            |
+                                    
+||Takes element from stack and finds it's:                                                                              |
+|SQRT            | square root                                                                                          |
+|SIN             | sin                                                                                                  |
+|COS             | cos                                                                                                  |
+|TAN             | tan                                                                                                  |
+||and writes result into stack                                                                                          |
+ 
+|JMP 5           | jumps into place in code with index 5(remember - one command one element, one argument - 8 elements) |
+|JMP :1          | jumps to place of label declaration. WARNING do not redeclare labels                                 |
+ 
+||Commands doing JMP if:                                                                                                |
+||pop a and b from stack                                                                                                |
+|JA              | a < b                                                                                                |
+|JB              | a > b                                                                                                |
+|JE              | a == b                                                                                               |
+|JNE             | a != b                                                                                               |
+|JAE             | a <= b                                                                                               |
+|JBE             | a >= b                                                                                               |
+|JT              | jumps if today is tuesday                                                                            |
+ 
+|CALL ...        | calls function with label or index(as jmp). remembers place of call into calls stack                 |
+|RET             | pops element from calls stack and puts IP to this value                                              |
+ 
+ 
+|DRAW            | prints all RAM to stdout                                                                             |
 
 ## Asm work pattern
 
-1) takes file full
+1) takes bin code in one read from file to make it faster.
 2) parses it into lines
 3) goes trough each line and compiles it into:
     - asm listing code (commands code with argument in normal numbers)
