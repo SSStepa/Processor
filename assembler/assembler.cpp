@@ -35,13 +35,13 @@ WORK_RES GetCompiledCodeLine(FileData *data, bool firstRun)
 
     WORK_RES statusCode = OK;
 
-    (data -> textOpcode).str = (char *) calloc((data -> asmStartData).len, sizeof(char));
-    if ((data -> textOpcode).str == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
-    (data -> textOpcode).len = 0;
+    TEXT_STR = (char *) calloc((data -> asmStartData).len, sizeof(char));
+    if (TEXT_STR == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
+    TEXT_LEN= 0;
 
-    (data -> binOpcode).str = (char *) calloc((data -> asmStartData).len*8, sizeof(char)); // TODO: controle size 
-    if ((data -> binOpcode).str == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
-    (data -> binOpcode).len = 0;
+    BIN_STR = (char *) calloc((data -> indLen) * 10, sizeof(char));
+    if (BIN_STR == NULL) return $ERR("NOT ENOUGH MEMORY WHILE CREATING BUFFER FOR COMPILED COMMANDS AS TEXT", NOMEM);
+    BIN_STR = 0;
     
     char command[COMMAND_MAX_LEN] = "";
     int elementsAmount = 0;
@@ -98,19 +98,18 @@ WORK_RES PutCommandToCode(FileData *data, char *command, int *elementsAmount)
                     commandNumber == JBE || commandNumber == JT ||
                     commandNumber == CALL
                     ) {
-                (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d ", commandNumber);
-                *((data -> binOpcode).str + (data -> binOpcode).len++) =  (char) commandNumber;
+                TEXT_ADD("%d ", commandNumber);
+                BIN_ADD(unsigned char, (unsigned char) commandNumber);
+
                 statusCode = GoToArgToCode(data);
                 *elementsAmount += sizeof(double);
             
             } else {
-                (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d", commandNumber);
-                *((data -> binOpcode).str + (data -> binOpcode).len++) = (char) commandNumber;
+                TEXT_ADD("%d", commandNumber);
+                BIN_ADD(unsigned char, (unsigned char) commandNumber);
             }
 
-
-            sprintf(&((data -> textOpcode).str[(data -> textOpcode).len]), "\n");
-            (data -> textOpcode).len += 1;
+            sprintf(&(TEXT_STR[TEXT_LEN++]), "\n");
             break;
         }
 
@@ -145,7 +144,7 @@ WORK_RES PopCommandToCode(FileData *data, int *elementsAmount)
 
     PushPopArgParse(&commandNumber, data, elementsAmount); 
 
-    if (commandNumber == 0X23 || commandNumber == 0x63) {
+    if (commandNumber == KONST_NUM + POP || commandNumber == KONST_NUM + REGISTER_NUM + POP) {
         return $ERR("SYNTAX ERROR: WRONG ARGUMENT FOR POP", WRIN);
     }
 
@@ -185,36 +184,40 @@ WORK_RES PushPopArgParse(unsigned char *commandNumber, FileData *data, int *elem
     (data -> commandLine)++; // skip whitespace
 
     if ((data -> commandLine)[0] == '[') {
-        commandAdd |= 0x80;
+        commandAdd |= MEMORY_NUM;
         (data -> commandLine)++; 
     }
+ 
+    int size = 0;
+    if (sscanf(data -> commandLine, "%lg + %3[^] ]%n", &arg1, arg2, &size) == 3 || 
+        sscanf(data -> commandLine, "%3[^+ ] + %lg%n",  arg2, &arg1, &size) == 3) {
+        commandAdd |= REGISTER_NUM + KONST_NUM;
 
-    if (sscanf(data -> commandLine, "%lg + %3[^] ]", &arg1, arg2) == 2 || // TODO: %n for ] if [
-        sscanf(data -> commandLine, "%3[^+ ] + %lg",  arg2, &arg1) == 2) {
-        commandAdd |= 0x60;
+        if (commandAdd & MEMORY_NUM && (data -> commandLine)[size] != ']') {
+            return $ERR("NO CLOSING BRACKET", WRIN);
+        }
     } else if (sscanf(data -> commandLine, "%lg", &arg1) == 1) {
-        commandAdd |= 0x20;
+        commandAdd |= KONST_NUM;
         *elementsAmount += sizeof(double);
     } else if (sscanf(data -> commandLine, "%3[^] ]", arg2) == 1) {
-        commandAdd |= 0x40;
+        commandAdd |= REGISTER_NUM;
         (*elementsAmount)++;
     } else return $ERR("WRONG INPUT WHILE GETING PUSH ARGUMENT", WRIN);
 
     *commandNumber |= commandAdd;
-    (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%d ", *commandNumber);
-    *((data -> binOpcode).str + (data -> binOpcode).len++) =  *commandNumber; // TODO: define as STR LEN and next (DSL)
+    TEXT_ADD("%d ", *commandNumber);
+    BIN_ADD(unsigned char, *commandNumber);
 
-    if (commandAdd & 0x20) {
-        (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%lg", arg1);
-        *((double *) ((data -> binOpcode).str + (data -> binOpcode).len)) =  arg1;
-        (data -> binOpcode).len += sizeof(double);
+    if (commandAdd & KONST_NUM) {
+        BIN_ADD(double, arg1);
+        TEXT_ADD("%lg", arg1)
     }
-    if (commandAdd & 0x40) {
+    if (commandAdd & REGISTER_NUM) {
         char regCode = 0;
         RUN_COMMAND(GetRegisterByName(arg2, &regCode), "WRONG NAME OF THE REGISTER");
 
-        (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, " %d", regCode);
-        *((data -> binOpcode).str + (data -> binOpcode).len++) =  regCode;
+        TEXT_ADD("%d", regCode);
+        BIN_ADD(char, regCode);
     }
     
     return OK;
@@ -246,9 +249,8 @@ WORK_RES GoToArgToCode(FileData *data)
     } else
         if (sscanf(data -> commandLine, "%d", &goTo) != 1) return $ERR("WRONG ARGUMENT FOR JUMP COMMAND", WRIN);
     
-    (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, "%lg", (double) goTo);
-    *((double *) ((data -> binOpcode).str + (data -> binOpcode).len)) =  (double) goTo;
-    (data -> binOpcode).len += sizeof(double);
+    TEXT_ADD("%lg", (double) goTo);
+    BIN_ADD(double, (double) goTo);
 
     return statusCode;
 
@@ -353,8 +355,8 @@ WORK_RES ClearData(FileData *data)
     assert(data);
 
     free((data -> asmStartData).str);
-    free((data -> binOpcode).str);
-    free((data -> textOpcode).str);
+    free(BIN_STR);
+    free(TEXT_STR);
     free(data ->  indexDyn);
 
 
@@ -372,14 +374,14 @@ WORK_RES OutFileFull(const char *outBinName, const char *outFileTextName, FileDa
     int fileDes = open(outFileTextName, O_WRONLY, 0);
     if (fileDes == -1) return $ERR("NO FILE TO WRITE TO IN OutFileFull", FILEERR);
 
-    write(fileDes, (data -> textOpcode).str, (unsigned int) (data -> textOpcode).len);
+    write(fileDes, TEXT_STR, (unsigned int) TEXT_LEN);
 
     close(fileDes);
 
     FILE *binFile = fopen(outBinName, "wb");
     if (binFile == NULL) return $ERR("NO FILE TO WRITE TO BIN IN OutFileFull", FILEERR);
 
-    fwrite((data -> binOpcode).str, sizeof(char), (data -> binOpcode).len, binFile);
+    fwrite(BIN_STR, sizeof(char), BIN_LEN, binFile);
 
     fclose(binFile);
     

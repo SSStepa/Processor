@@ -91,6 +91,24 @@ const int REGISTER_MAX_LEN  = 3;
 const int LABELS_START_SIZE = 20;
 const char *const LABEL_INIT      = "";
 
+const int MEMORY_NUM = 0x80;
+const int REGISTER_NUM = 0x40;
+const int KONST_NUM = 0x20;
+
+#define BIN_STR (data -> binOpcode).str
+#define BIN_LEN (data -> binOpcode).len
+
+#define TEXT_STR (data -> textOpcode).str
+#define TEXT_LEN (data -> textOpcode).len
+
+
+#define BIN_ADD(type, arg) \
+    *((type *) ((data -> binOpcode).str + (data -> binOpcode).len)) =  arg;\
+    (data -> binOpcode).len += sizeof(arg);
+
+#define TEXT_ADD(string, arg) \
+    (data -> textOpcode).len += sprintf((data -> textOpcode).str + (data -> textOpcode).len, string, arg);
+
 WORK_RES Assembler(const char *inFileName, const char *outBinFileName, const char *outFileName);
 WORK_RES GetCompiledCodeLine(FileData *data, bool firstRun);
 WORK_RES PutCommandToCode(FileData *data, char *command, int *elementsAmount);
