@@ -151,7 +151,7 @@ OUT_D
 HLT
 ```
 Printf latter A
-```
+``` ams
 PUSH 65
 OUT_C
 HLT
