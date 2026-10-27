@@ -137,7 +137,7 @@ Assembler uses DSL:
 ### Asm DSL(domain-specific-language):
 
 Making requests to out text and bin files easier to write and understand
-| DSL command | | real C code under it | explanation |
+| DSL command | real C code under it | explanation |
 |:--------:|:-------------------------:|:----------------------------------------------------------------------:|
 | BIN_STR  | (data -> binOpcode).str   | attach to bin text line (line with all already compiled code)          |
 | BIN_LEN  | (data -> binOpcode).len   | attach to index of first not fulled element in binary code line        |
