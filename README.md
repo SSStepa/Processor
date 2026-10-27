@@ -234,7 +234,7 @@ for creating and parsing bad apple script BadConvert.cpp used (see BadConvert)
 ## BadConvert
 
 this program:
- - uses analog of RAM to use delta codding (we store info about how our RAM looks now and change only elements which are changed in this frame)
+ - uses analog of RAM to use [delta codding](https://en.wikipedia.org/wiki/Delta_encoding) (we store info about how our RAM looks now and change only elements which are changed in this frame)
  - RAM size is same with frame size (one frame - one print of RAM)
  - opens each file in which one frame info is stared 
  - takes it as one line
