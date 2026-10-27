@@ -23,13 +23,15 @@ HLT
 
     CALL :factorial
     PUSH BX
+
     PUSH AX
     PUSH 1
     ADD
     POP AX
+    
     PUSH AX
-
     MULT
+
     POP BX
     RET
 

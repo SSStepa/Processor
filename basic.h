@@ -12,6 +12,8 @@
 #include <math.h>
 #include <assert.h>
 #include <sys/stat.h>
+#include <stdio.h>
+#include <getopt.h>
 
 // -------------------------------------------------------- Project basic only -----------------------------------------------------------------------------
 
@@ -171,8 +173,15 @@ WORK_RES EndError();
 #define MY_ASSERT(...) 
 #endif
 
+const char *const OPTS = "i:o:h";
+
 WORK_RES GetFileFull(const char *fileName, string_t *string);
 WORK_RES GetFileFullBin(const char *fileName, string_t *string);
 WORK_RES OutFileFull(const char *fileName, string_t *string);
+
+
+WORK_RES FlagsParse(int argc, char *const *argv, const char **FileToReadFrom, const char **FileToWriteTo);
+void ShowHelp();
+
 
 #endif

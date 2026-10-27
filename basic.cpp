@@ -152,3 +152,37 @@ WORK_RES GetFileFullBin(const char *fileName, string_t *string)
 
     return OK;
 }
+
+WORK_RES FlagsParse(int argc, char *const *argv, const char **FileToReadFrom, const char **FileToWriteTo)
+{
+    int arg = 0;
+
+    while((arg = getopt(argc, argv, OPTS)) != -1) {
+        switch (arg)
+        {
+        case 'i':
+            *FileToReadFrom = optarg;
+            break;
+
+        case 'o':
+            *FileToWriteTo = optarg;
+            break;
+
+        case 'h':
+            ShowHelp();
+            break;
+
+        default:
+            $ERR("BAD FLAGS IN CALL", WRIN);
+            break;
+        }
+    }
+
+    return OK;
+}
+
+void ShowHelp()
+{
+    printf("[-i]  Name of file to read from\n");
+    printf("[-o]  Name of file to write to");
+}

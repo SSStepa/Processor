@@ -20,12 +20,13 @@ int main () {
         string_t string = {};
         GetFileFull(filename, &string);
         for (size_t elem = 0; elem < FILE_ELEMS; elem++) {
-            // if(string.str[elem] != mem[elem]) {
-                // mem[elem] = string.str[elem];
+            if(string.str[elem] != mem[elem]) {
+                mem[elem] = string.str[elem];
                 fprintf(outFile, "PUSH %d\nPOP [%d]\n", string.str[elem], elem + 3);
-            // }
+            }
         }
         fprintf(outFile, "DRAW\n");
+        free(string.str);
     }
     fclose(outFile);
 }

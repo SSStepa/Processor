@@ -1,12 +1,15 @@
 #include "proc.h"
 
-int main()
+int main(const int argc, char *const *argv)
 {
     SetUpLog();
     
-    const char *fileName = "../assembler/c.bin";
+    const char *inFileName = "";
+    const char *outFileName = "../assembler/c.bin";
 
-    Proc(fileName);
+    FlagsParse(argc, argv, &inFileName, &outFileName);
+
+    Proc(outFileName);
 
     return 0;
 }
