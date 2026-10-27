@@ -29,20 +29,20 @@ Project consists of two main parts:
 - assembler  
     basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)  
     Gives ability to use:  
-        - choose file to compile and file compile to  
-        - jumps  
-        - function calls  
-        - registers  
-        - labels  
-        - comments  
+    - choose file to compile and file compile to  
+    - jumps  
+    - function calls  
+    - registers  
+    - labels  
+    - comments  
     (for more info see Asm Code description)  
     Optimizations:   
-        - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)  
-        - outing to files at one (also only one request to file, all work of program is connected with string)  
-        - works on double stack for data  
-        - has second stack for calls data  
-        - works with 4 registers  
-        - works with RAM(See RAM)  
+    - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)  
+    - outing to files at one (also only one request to file, all work of program is connected with string)  
+    - works on double stack for data  
+    - has second stack for calls data  
+    - works with 4 registers  
+    - works with RAM(See RAM)  
     result of work - .bin file optimized that all commands and variables names take 1 byte and other args 8 bytes(double size)  
 
 >[!NOTE]
@@ -167,8 +167,8 @@ labels also may be numbers line `:1` it is regarded as work "1"
 ## One byte command optimization
 My processor has only 24 commands (to see them look ams code description). So all them may be packed in 5 bytes(2^5 different variants). so three first bytes are used to understand the type of argument:
 |1|2|3|4 5 6 7 8|
-|-|-|-|-----|
-|wark with memory|work with register|work with const| command opcode|
+|*-----------------*|*-------------------*|*-----------------*|*---------------*|
+|wark with memory |work with register | work with const | command opcode|
 
 arguments of different types may be used (for example you can combine pushing to memory with index from register. See Examples or Ams work pattern for more)
 for example:
