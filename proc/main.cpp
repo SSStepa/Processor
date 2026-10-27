@@ -1,5 +1,6 @@
 #include "proc.h"
 
+// DONE: readme
 int main(const int argc, char *const *argv)
 {
     SetUpLog();

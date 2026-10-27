@@ -1,11 +1,12 @@
-# SPU and assembler project
-This project is third tasks of MIPT DREC 1 course program for advanced group Program is taught by Dedinsky Ilya Rudolfovich(@ded32_ru)
-It consists of minimum [Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness) processor. And assembler
+# SPU и асемблер
+Этот проект является третьим заданием курса по программированию преподаваемого Ильёй Рудольфовичем Дединским(@ded32_ru) на первом курсе МФТИ ФРКТ.  
+Задание представляет из себя реализацию минимального [тьюринг-полного](https://en.wikipedia.org/wiki/Turing_completeness) процессора на основании стековой архитектуры и ассемблера.
+
 
 
 ![Bad1](./BadScreen.jpg)
-## Description 
-### Structure of project
+## Описание
+### Структура проекта
 ```
 Processor/
 ├── proc/
@@ -25,192 +26,184 @@ Processor/
 └── .gitignore
 ```
 
-Project consists of two main parts:
-- assembler  
-    basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)  
-    Gives ability to use:  
-    - choose file to compile and file compile to  
-    - jumps  
-    - function calls  
-    - registers  
-    - labels  
-    - comments  
-    (for more info see Asm Code description)  
-    Optimizations:   
-    - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)  
-    - outing to files at one (also only one request to file, all work of program is connected with string)  
-    - works on double stack for data  
-    - has second stack for calls data  
-    - works with 4 registers  
-    - works with RAM(See RAM)  
-    result of work - .bin file optimized that all commands and variables names take 1 byte and other args 8 bytes(double size)  
+Проект состоит из двух основных частей:
+- ассемблер  
+    Чтение и преобразование моего языка ассемблера (Смотрите информацию в Язык ассемблера) в бинарный код.    
+    Вывод происходит параллельно в бинарный файл и файл ассемблерного листинга. Первый предназначен для исполнения программой процессора, а листинг необходим для отладки.    
+    В ассемблере вы можете использовать:  
+    - выбирать из какого файла читать и в какой выводить.    
+    - переходы от одной части кода к другой(jumps, как go to)  
+    - вызовы функций (без передачи аргументов)  
+    - регистры   
+    - метки (именные)  
+    - комментарии   
+    (Для большего количества информации смотрите Язык ассемблера)
+
+    Оптимизации, используемые ассемблером:
+    - читает из файла за раз (одно обращение к оперативной памяти), что бы сократить время выполнения программы.  
+    - вывод так же происходит за одно обращение к оперативной памяти
+    - код вывода неравномерен (смотрите Команда в один байт)
+    - ассемблер использует double переменные
+    - использует второй стек для хранения информации о вызванных функциях
+    - поваляет использовать 4 регистра
+    - реализована работа с RAM (для большего количества информации смотрите вкладку RAM)
+    Результатом выполнения программы является бинарный файл с неравномерным кодом (команда занимает 1 байт, аргумент либо 1 либо 8)
 
 >[!NOTE]
->we assume that we are working with doubles.  
-- processor  
-    - program which takes compiled file and executes it.   
-    - gives ability choose file to compile and file compile to.  
-    - main data storage source is stack (stack processor)  
-    - Optimizations:  
-        - reading from file at one (only one request to in file, than it copied to the string and work continues only with it)  
-        - regards commands as bin fields (see One byte command optimization)  
+>Процессор предполагает что аргументы имеют тип double
+- процессор
+    - читает бинарный файл и выполняет его
+    - выбор файла для чтения определяется аргументом командной строки.
+    - работает на стековой архитектуре
+    - Оптимизации:
+        - чтение исполняемого кода за одно обращение к файлу (ускоряет выполнение программы)
+        - команды рассматриваются как набор битовых полей (смотрите Команда как 1 байт)
 
-## Stacks
-stacks for processor are used
-taken from my project. see [Stack](https://github.com/SSStepa/My_Stack) for more
+## Стэк
+Процессор использует [мой стэк](https://github.com/SSStepa/My_Stack) в своей архитектуре
 
-
-## Asm code description
+## Язык ассемблера
 ![Bad2](./BadApple2.jpg)
 
-Registers to use: `AX BX CX DX`
-Register is variable which stares its value until changed
+Регистры возможные для использования: `AX BX CX DX`
+Регистр - переменная с быстрым доступом, значение в которой храниться до её изменения
 
-Labels may be used as words:
-```
-(valid labels)
-:1
-:next
-:hiMyBelovedFriend
-```
+### Метки
+Аналоговый способ обозначения мест перехода между частями кода. При компиляции заменяются на непосредственные адреса
+
+Синтаксис: `:[name]` где name имя метки. Например `:hiBaby`
+>[!WARNING]
+> повторная декларация меток запрещена. Это приведёт к ошибке и остановке работы программы
+
+Имя метки - любая последовательность символов без пробелов
 
 
-Valid commands:
+### Команды языка:
 
-| command | explanation |                                   
+| команда | объяснение |                                   
 |:--------------:|:----------------------------------------------------------------------------------------------------:|
-|HLT             | ends work of processor                                                                               |
-|PUSH 11.1       | pushes const into data stack                                                                         |
-|PUSH AX         | pushes value of AX register into data stack                                                          |
-|PUSH AX + 11.1  | pushes value of AX + const into data stack                                                           |
-|PUSH [1]        | takes info from RAM[1] and pushes into data stack                                                    |
-|PUSH [AX]       | pushes info from RAM[AX/value] into data stack                                                       |
-|PUSH [1+AX]     | pushes info from RAM[AX.value + 1] into data stack                                                   |
-|POP AX          | pops value from stack into AX                                                                        |
-|POP [1]         | pops value from stack into RAM[1]                                                                    |
-|POP [AX]        | pops value from stack into RAM[AX.value]                                                             |
-|POP [1+AX]      | pops value from stack into RAM[AX.value + 1]                                                         |
-|OUT_D           | pops element from stack and prints it to stdout                                                      |
-|OUT_C           | pops element from stack and prints it to stdout as char                                              |
-|IN_D            | takes one char form stdin and writes it into data stack as double                                    |
-||Takes two elements from stack and:                                                                                    |
-|ADD             | finds their sum                                                                                      |
-|SUB             | finds their difference                                                                               |
-|MULT            | finds their multiplication                                                                           |
-|DIV             | divides one by other                                                                                 |
-||And writes result to stack                                                                                            |
-||Takes element from stack and finds it's:                                                                              |
-|SQRT            | square root                                                                                          |
+|HLT             | заканчивает исполнение программы                                                                     |
+|PUSH 11.1       | пушит константу в стек данных                                                                        |
+|PUSH AX         | пушит значение регистра AX в стек данных                                                             |
+|PUSH AX + 11.1  | пушит значение регистра плюс константы в стек данных                                                 |
+|PUSH [1]        | пушит значение из оперативной памяти с индексом 1 в стек данных                                      |
+|PUSH [AX]       | пушит значение из оперативной памяти с индексом значения регистра RAM[AX.val]                        |
+|PUSH [1+AX]     | пушит значение из оперативной памяти с индексом значения регистра плюс константы RAM[AX.val + 1]     |
+|POP AX          | берёт значение из стека и кладёт в AX                                                                |
+|POP [1]         | берёт значение из стека и кладёт в оперативную память с индексом 1 RAM[1]                            |
+|POP [AX]        | берёт значение из стека и кладёт в оперативную память с индексом значения регистра RAM[AX.value]     |
+|POP [1+AX]      | то же, но адрес в оперативной памяти определяет сумма значения регистра и константы RAM[AX.val + 1]  |
+|OUT_D           | выводит в стандартный вывод значение из стека как число                                              |
+|OUT_C           | то же что и выше но выводит как символ                                                               |
+|IN_D            | записывает в стек одно число со стандартного ввода                                                   |
+||берёт два элемента из стека и:                                                                                        |
+|ADD             | складывает их                                                                                        |
+|SUB             | вычитает их                                                                                          |
+|MULT            | перемножает их                                                                                       |
+|DIV             | находит их частное                                                                                   |
+||Результат действий записывает в стек                                                                                  |
+||берёт элемент из стека и находит его:                                                                                 |
+|SQRT            | квадратный корень                                                                                    |
 |SIN             | sin                                                                                                  |
 |COS             | cos                                                                                                  |
 |TAN             | tan                                                                                                  |
-||and writes result into stack                                                                                          |
-|JMP 5           | jumps into place in code with index 5(remember - one command one element, one argument - 8 elements) |
-|JMP :1          | jumps to place of label declaration. WARNING do not redeclare labels                                 |
-||Commands doing JMP if:                                                                                                |
-||pop a and b from stack                                                                                                |
+||значение сохраняет на стеке                                                                                           |
+|JMP 5           | переходит на позицию с индексом 5 в коде (не забывайте что команда занимает 1 байт аргумент 8 или 1) |
+|JMP :1          | переходит к месту определения данной метки                                                           |
+||Прыжок происходит если:                                                                                               |
+||берём 2 числа со стека                                                                                                |
 |JA              | a < b                                                                                                |
 |JB              | a > b                                                                                                |
 |JE              | a == b                                                                                               |
 |JNE             | a != b                                                                                               |
 |JAE             | a <= b                                                                                               |
 |JBE             | a >= b                                                                                               |
-|JT              | jumps if today is tuesday                                                                            |
-|CALL ...        | calls function with label or index(as jmp). remembers place of call into calls stack                 |
-|RET             | pops element from calls stack and puts IP to this value                                              |
-|DRAW            | prints all RAM to stdout                                                                             |
+|JT              | переходит если сегодня вторник                                                                       |
+|CALL ...        | вызывает функцию. Процесс крайне похож на jmp но место вызова запоминается в стеке вызовов           |
+|RET             | берёт элемент из стека вызовов и переходит к месту в коде с этим индексом                            |
+|DRAW            | Выводит на экран всю оперативную память                                                              |
 
-## Asm work pattern
+## Схема работы ассемблера
 
-1) takes asm code in one request to operative (reads file as one line to memory). That helps to make work of assembler faster
-2) parses it into lines (to better check of codestyle and ability to use commentaries)
-3) goes trough each line and compiles it into:
-    - asm listing code (commands code with argument in numbers)
-    - bin file for proc. WARNING open in hex redactors. Used by processor to execute
-4) fills labels array;
-5) deletes all first run results except labels array
-6) fills asm listing and bin lines with correct labels (one more time doing step 3 but now all labels are correct)
-7) outs both lines into files at once (each file we write in one request to memory, which makes it faster);
 
-Assembler uses DSL:
+1) читает весь ассемблерный код из файла за одно обращение что бы сделать это как можно более быстрым
+2) разделяет эту строку на линии для удобства проверки комментариев и стиля кода
+3) пробегает по всему массиву и переводит каждую команду в:
+    - ассемблерный листинг для проверки правильности
+    - бинарный код для исполнения процессором. Не предназначен для чтения. В случае необходимости открывать в шестнадцатеричном редакторе
+4) заполняет массив меток
+5) удаляет результаты первого прохода
+6) повторяет шаг 3 с учётом правильной таблицы меток
+7) выводит обе строки в файлы за одно обращение, для ускорения работы
 
-### Asm DSL(domain-specific-language):
-
-Making requests to out text and bin files easier to write and understand
+### Ассемблер DSL(domain-specific-language):
+Упрощения снимающие синтаксическую нагрузку и делающие код более понятным и простым для чтения
 | DSL command | real C code under it | explanation |
 |:--------:|:-------------------------:|:----------------------------------------------------------------------:|
-| BIN_STR  | (data -> binOpcode).str   | attach to bin text line (line with all already compiled code)          |
-| BIN_LEN  | (data -> binOpcode).len   | attach to index of first not fulled element in binary code line        |
-| TEXT_STR |  (data -> textOpcode).str | attach to assembler listing line (line with all already compiled code) |
-| TEXT_LEN |  (data -> textOpcode).len | attach to index if first not fulled element in assembler listing line  |
+| BIN_STR  | (data -> binOpcode).str   | обращение к строке бинарного кода                                      |
+| BIN_LEN  | (data -> binOpcode).len   | индекс первого не заполненного элемента строки с бинарным кодом        |
+| TEXT_STR |  (data -> textOpcode).str | обращение к строке ассемблерного листинга                              |
+| TEXT_LEN |  (data -> textOpcode).len | индекс первого не заполненного элемента в строке ассемблерного листинга|
 
 
-### Labels
-You are able to use labels instead of direct indexes of code lines
-label syntax is `:[name]` where name may be any characters line with no whitespaces 
 
->[!WARNING]
->Do not redeclare labels. It will stop work of problem with error
+## Схема работы процессора
+1) читает код в массив за одно обращение к файлу для увеличение скорости исполнения
+2) начинает идти по считанной строке исполняя по одной команде  
+3) каждая команда занимает один байт память:1-регистр:1-константа:1-код команды:5  
+4) аргумент занимает 1 байт(имя регистра) или 8 байт(константа)
+5) выравнивание не учитывается  
+6) Считает что программа завершается HLT. Иначе может возникнуть неопределённое поведение
 
-labels also may be numbers line `:1` it is regarded as work "1"
-
-## Proc work pattern
-1) reads bin info in one request to file. that makes program faster. all bin code is stored as line in dynamic memory  
-2) starts reading from line of chars (each command is one byte, that is same with sizeof(char))  
-3) command is regarded as one byte where mem:1-reg:1-konst:1-code:5 division is used (see One byte command optimization)  
-4) argument may take one (register name) or 8 (konst double) bytes  
-5) doesn't account alignment (windows architecture)  
-6) accepts that program finishes with HLT. or Undefined behaver may occur  
-
-## One byte command optimization
-My processor has only 24 commands (to see them look ams code description). So all them may be packed in 5 bytes(2^5 different variants). so three first bytes are used to understand the type of argument:
+## Оптимизация команды как 1 байт
+Так как процессор включает всего 24 команды нам достатычно 5 бит для их кодировки. 3 остальных бита хранят информацию о типе аргумента
 |1|2|3|4 5 6 7 8|
 |:-----------------:|:------------------:|:-----------------:|:---------------:|
-|wark with memory |work with register | work with const | command opcode|
+|работа с оперативной памятью | работа с регистром | работа с константой | опкод команды|
 
-arguments of different types may be used (for example you can combine pushing to memory with index from register. See Examples or Ams work pattern for more)
-for example:
-assume that push command is 1 and pop is 2
+Можно сочетать аргументы разных типов
+Например:
+пусть код PUSH 2 а POP 1
 |command|command bin code| explanation|
 |:-----:|:-------------:|------------|
-|PUSH 1      |  [00100010] | pushes 1 onto stack                                  |
-|POP AX      |  [01000001] | puts info to register AX                             |
-|PUSH [AX+1] |  [11100010] | takes info from RAM[AX.val + 1] and pushes into stack|
+|PUSH 1      |  [00100010] | сохраняет 1 в стек                                                   |
+|POP AX      |  [01000001] | сохраняет информацию в регистр AX                                    |
+|PUSH [AX+1] |  [11100010] | сохраняет в стек информацию из оперативной памяти по адресу AX.val +1 |
 
 
-## In and Out files 
+## Файлы ввода(вывода)
 
-Both proc and asm programs give you ability to insert input and output files on your own. use flags wile running:
+Обе программы позволяют выбирать файл для ввода(вывода) вручную. Для этого применяются аргументы командной строки:
 ```
--i [name] - input file name 
--o [name] - output file name
+-i [name] - имя входного файла 
+-o [name] - имя выходного файла
 ```
 
 ## RAM
-is double array with size which is stored in ```./proc/proc.h/:RAM_INIT_SIZE```
-to write and get info from [] syntax is used:
+Массив типа double размер которого задаёт переменная ```./proc/proc.h/:RAM_INIT_SIZE```
+Для обращения к оперативной памяти используется синтаксис [ind] как в массивах:
 ``` asm
-PUSH[0]
 POP[0]
+PUSH[0]
 ```
-Pushes info to memory with index 0 and takes this value back. Info from memory doesn't disappear
+Берёт значение со стека и сохраняет в оперативной памяти по индексу 0. Затем пушит обратно в стек( в памяти остаётся)  
 
-## Examples of usage:
+## Примеры применения:
 
-Print number:
+Вывести число:
 ``` asm
 PUSH 67
 OUT_D
 HLT
 ```
-Printf latter A
+вывести букву A
 ``` asm
 PUSH 65
 OUT_C
 HLT
 ```
 
-Sum elements and out:
+Сложить два введённых пользователем элемента и вывести:
 ``` asm
 IN_D
 IN_D
@@ -220,24 +213,19 @@ HLT
 
 ```
 
-on the git hub are my realizations of programs:
-- circle.asm - draw circle using RAM
-- fact.asm - recursively calculating fact of number
-- sqr - solves square equation
+Так же в каталоге этого проекта можно найти следующие примеры команд на моем языке ассемблера реализованных мной:
+- circle.asm - рисует кружочек с использованием RAM
+- fact.asm - рекурсивно подсчитывает факториал числа
+- sqr - решает квадратное уравнение
 
-- bad apple - gives you perfect badApple video to watch
-for creating and parsing bad apple script BadConvert.cpp used (see BadConvert)
-
+- bad apple - выводит в консоль видео BadApple. Исполняемый файл является результатом работы моего скрипта BadConvert. Подробнее смотрите ниже  
 
 ## BadConvert
 
-this program:
- - uses analog of RAM to use [delta codding](https://en.wikipedia.org/wiki/Delta_encoding) (we store info about how our RAM looks now and change only elements which are changed in this frame)
- - RAM size is same with frame size (one frame - one print of RAM)
- - opens each file in which one frame info is stared 
- - takes it as one line
- - analyses it according to delta coding (change RAM elements only if they are changed)
- - writes out to file this info and command to draw frame
- - closes file and opens next
+Скрипт:
+ - Имеет свой клон оперативной памяти для реализации [дельта кодирования](https://en.wikipedia.org/wiki/Delta_encoding) (мы храним вид оперативной памяти и меняем только те элементы, которые устарели)
+ - открывает каждый файл раскадровки и обрабатывает его (чтение за 1 раз, анализ различия элементов)
+ - записывает в ассемблерный файл все необходимые команды для изменения и выводит кадр на экран (печатает оперативную память)
+ - закрывает файл и всё повторяется
 
-
+Применённая оптимизация дельта-кодированием позволила сократить объём исходника с 400мб до 32мб.
