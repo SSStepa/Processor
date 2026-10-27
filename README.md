@@ -26,16 +26,15 @@ Processor/
 ```
 
 Project consists of two main parts:
-- assembler
-    basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)
-      
-    Gives ability to use:
-        - choose file to compile and file compile to
-        - jumps
-        - function calls
-        - registers
-        - labels
-        - comments
+- assembler  
+    basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)  
+    Gives ability to use:  
+        - choose file to compile and file compile to  
+        - jumps  
+        - function calls  
+        - registers  
+        - labels  
+        - comments  
     (for more info see Asm Code description)
     Optimizations: 
         - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)
@@ -158,12 +157,12 @@ label syntax is `:[name]` where name may be any characters line with no whitespa
 labels also may be numbers line `:1` it is regarded as work "1"
 
 ## Proc work pattern
-1) reads bin info in one request to file. that makes program faster. all bin code is stored as line in dynamic memory
-2) starts reading from line of chars (each command is one byte, that is same with sizeof(char))
-3) command is regarded as one byte where mem:1-reg:1-konst:1-code:5 division is used (see One byte command optimization)
-4) argument may take one (register name) or 8 (konst double) bytes
-5) doesn't account alignment (windows architecture)
-6) accepts that program finishes with HLT. or Undefined behaver may occur
+1) reads bin info in one request to file. that makes program faster. all bin code is stored as line in dynamic memory  
+2) starts reading from line of chars (each command is one byte, that is same with sizeof(char))  
+3) command is regarded as one byte where mem:1-reg:1-konst:1-code:5 division is used (see One byte command optimization)  
+4) argument may take one (register name) or 8 (konst double) bytes  
+5) doesn't account alignment (windows architecture)  
+6) accepts that program finishes with HLT. or Undefined behaver may occur  
 
 ## One byte command optimization
 My processor has only 24 commands (to see them look ams code description). So all them may be packed in 5 bytes(2^5 different variants). so three first bytes are used to understand the type of argument:
