@@ -1,5 +1,8 @@
 # SPU and assembler project
 This project is third tasks of MIPT DREC 1 course program for advanced group Program is taught by Dedinsky Ilya Rudolfovich(@ded32_ru)
+It consists of minimum [Turing-complete](https://en.wikipedia.org/wiki/Turing_completeness) processor. And assembler
+
+
 ![Bad1](./BadScreen.jpg)
 ## Description 
 ### Structure of project
@@ -25,8 +28,7 @@ Processor/
 Project consists of two main parts:
 - assembler
     basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)
-    >[!NOTE]
-    >we assume that we are working with doubles.
+      
     Gives ability to use:
         - choose file to compile and file compile to
         - jumps
@@ -42,8 +44,10 @@ Project consists of two main parts:
         - has second stack for calls data
         - works with 4 registers
         - works with RAM(See RAM)
-
     result of work - .bin file optimized that all commands and variables names take 1 byte and other args 8 bytes(double size)
+
+>[!NOTE]
+>we assume that we are working with doubles.  
 - processor
     - program which takes compiled file and executes it. 
     - gives ability choose file to compile and file compile to.
@@ -165,9 +169,17 @@ labels also may be numbers line `:1` it is regarded as work "1"
 My processor has only 24 commands (to see them look ams code description). So all them may be packed in 5 bytes(2^5 different variants). so three first bytes are used to understand the type of argument:
 |1|2|3|4 5 6 7 8|
 |-|-|-|-----|
-|wark with memory|work with register|work with const| command name|
+|wark with memory|work with register|work with const| command opcode|
 
 arguments of different types may be used (for example you can combine pushing to memory with index from register. See Examples or Ams work pattern for more)
+for example:
+assume that push command is 1 and pop is 2
+|command|command bin code| explanation|
+|*-----*|*-------------*|------------|
+|PUSH 1      |  [00100010] | pushes 1 onto stack                                  |
+|POP AX      |  [01000001] | puts info to register AX                             |
+|PUSH [AX+1] |  [11100010] | takes info from RAM[AX.val + 1] and pushes into stack|
+
 
 ## In and Out files 
 
