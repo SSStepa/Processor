@@ -35,25 +35,25 @@ Project consists of two main parts:
         - registers  
         - labels  
         - comments  
-    (for more info see Asm Code description)
-    Optimizations: 
-        - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)
-        - outing to files at one (also only one request to file, all work of program is connected with string)
-        - works on double stack for data
-        - has second stack for calls data
-        - works with 4 registers
-        - works with RAM(See RAM)
-    result of work - .bin file optimized that all commands and variables names take 1 byte and other args 8 bytes(double size)
+    (for more info see Asm Code description)  
+    Optimizations:   
+        - reading from file at one(only one request to in file, than it copied to the string and work continues only with it)  
+        - outing to files at one (also only one request to file, all work of program is connected with string)  
+        - works on double stack for data  
+        - has second stack for calls data  
+        - works with 4 registers  
+        - works with RAM(See RAM)  
+    result of work - .bin file optimized that all commands and variables names take 1 byte and other args 8 bytes(double size)  
 
 >[!NOTE]
 >we assume that we are working with doubles.  
-- processor
-    - program which takes compiled file and executes it. 
-    - gives ability choose file to compile and file compile to.
-    - main data storage source is stack (stack processor)
-    - Optimizations:
-        - reading from file at one (only one request to in file, than it copied to the string and work continues only with it)
-        - regards commands as bin fields (see One byte command optimization)
+- processor  
+    - program which takes compiled file and executes it.   
+    - gives ability choose file to compile and file compile to.  
+    - main data storage source is stack (stack processor)  
+    - Optimizations:  
+        - reading from file at one (only one request to in file, than it copied to the string and work continues only with it)  
+        - regards commands as bin fields (see One byte command optimization)  
 
 ## Stacks
 stacks for processor are used
