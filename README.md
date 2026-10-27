@@ -167,14 +167,14 @@ labels also may be numbers line `:1` it is regarded as work "1"
 ## One byte command optimization
 My processor has only 24 commands (to see them look ams code description). So all them may be packed in 5 bytes(2^5 different variants). so three first bytes are used to understand the type of argument:
 |1|2|3|4 5 6 7 8|
-|*-----------------*|*-------------------*|*-----------------*|*---------------*|
+|:-----------------:|:------------------:|:-----------------:|:---------------:|
 |wark with memory |work with register | work with const | command opcode|
 
 arguments of different types may be used (for example you can combine pushing to memory with index from register. See Examples or Ams work pattern for more)
 for example:
 assume that push command is 1 and pop is 2
 |command|command bin code| explanation|
-|*-----*|*-------------*|------------|
+|:-----:|:-------------:|------------|
 |PUSH 1      |  [00100010] | pushes 1 onto stack                                  |
 |POP AX      |  [01000001] | puts info to register AX                             |
 |PUSH [AX+1] |  [11100010] | takes info from RAM[AX.val + 1] and pushes into stack|
