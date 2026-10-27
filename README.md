@@ -25,7 +25,7 @@ Processor/
 Project consists of two main parts:
 - assembler
     basic assembler, which takes asm file written according to my standard (see Asm code description) and compiles it into bin code(core info in asm work pattern)
-    >[!NOTE] 
+    >[!NOTE]
     >we assume that we are working with doubles.
     Gives ability to use:
         - choose file to compile and file compile to
@@ -180,7 +180,7 @@ Both proc and asm programs give you ability to insert input and output files on 
 ## RAM
 is double array with size which is stored in ```./proc/proc.h/:RAM_INIT_SIZE```
 to write and get info from [] syntax is used:
-```
+``` asm
 PUSH[0]
 POP[0]
 ```
