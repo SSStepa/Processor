@@ -134,18 +134,16 @@ Valid commands:
 
 Assembler uses DSL:
 
-### Asm DSL:
+### Asm DSL(domain-specific-language):
 
-Making requests to out text and bin files easier to get:
-``` c
+Making requests to out text and bin files easier to write and understand
+| DSL command | | real C code under it | explanation |
+|:--------:|:-------------------------:|:----------------------------------------------------------------------:|
+| BIN_STR  | (data -> binOpcode).str   | attach to bin text line (line with all already compiled code)          |
+| BIN_LEN  | (data -> binOpcode).len   | attach to index of first not fulled element in binary code line        |
+| TEXT_STR |  (data -> textOpcode).str | attach to assembler listing line (line with all already compiled code) |
+| TEXT_LEN |  (data -> textOpcode).len | attach to index if first not fulled element in assembler listing line  |
 
-#define BIN_STR (data -> binOpcode).str // - attach to bin text line (line with all already compiled code) 
-#define BIN_LEN (data -> binOpcode).len // -  attack to index of first not fulled element in binary code line
-
-#define TEXT_STR (data -> textOpcode).str // - attach to assembler listing line (line with all already compiled code)
-#define TEXT_LEN (data -> textOpcode).len // -  attach to index if first not fulled element in assembler listing line
-
-```
 
 ### Labels
 You are able to use labels instead of direct indexes of code lines
